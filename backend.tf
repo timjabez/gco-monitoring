@@ -4,5 +4,5 @@ terraform {
     prefix  = "terraform/state"
   }
 }
-provide "google" {
+provider "google" {
 }
