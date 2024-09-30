@@ -6,3 +6,8 @@ locals {
 #   name     = "demo-bucket-creation"
 #   location = local.location
 # }
+
+# module "iac-demo-gcs" {
+#   source     = "./Modules/Monitoring"
+
+# }
