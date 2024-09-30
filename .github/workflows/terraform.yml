@@ -20,6 +20,10 @@ jobs:
           create_credentials_file: 'true'
           workload_identity_provider: 'projects/605543589292/locations/global/workloadIdentityPools/github-actions-pool/providers/github'
           service_account: 'sa-github-actions@vivid-ocean-386206.iam.gserviceaccount.com'
+      - name: 'Set Terraform Provider Credentials'
+        run: |-
+          # Assuming the temporary credential file is created at /tmp/credentials.json
+          echo "export GOOGLE_APPLICATION_CREDENTIALS=/tmp/credentials.json" >> $GITHUB_ENV
     
       - name: 'terraform init'
         run: |-
