@@ -33,7 +33,7 @@ variable "create_dashboard" {
 variable "notification_email" {
   description = "List of email addresses for creating notification channels"
   type        = list(string)
-  default     = ["example1@example.com", "example2@example.com"]
+  default     = ["example1@example.com", "maravi@google.com"]
 }
 
 variable "notification_channel" {
@@ -41,7 +41,7 @@ variable "notification_channel" {
   type        = map(string)
   default = {
     "example1@example.com" = "User One"
-    "example2@example.com" = "User Two"
+    "maravi@google.com"    = "User Two"
   }
 }
 
@@ -58,6 +58,7 @@ variable "alert_durations" {
     sql_postgres_connections_alert_duration = string
     sql_instance_state_alert_duration       = string
     sql_replica_lag_alert_duration          = string
+
   })
   description = "Duration values for all alerts"
   default = {
@@ -86,7 +87,6 @@ variable "alert_thresholds" {
     sql_postgres_connections_threshold = number
     sql_instance_state_threshold       = number
     sql_replica_lag_threshold          = number
-
   })
   description = "Threshold values for all alerts"
   default = {

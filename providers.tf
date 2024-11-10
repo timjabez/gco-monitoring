@@ -14,5 +14,6 @@ terraform {
 
 provider "google" {
   project = "vivid-ocean-386206"
+  impersonate_service_account = "sa-github-actions@vivid-ocean-386206.iam.gserviceaccount.com"
   #   region  = "asia-south1"
 }
