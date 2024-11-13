@@ -33,7 +33,7 @@ variable "create_dashboard" {
 variable "notification_email" {
   description = "List of email addresses for creating notification channels"
   type        = list(string)
-  default     = ["example1@example.com", "maravi@google.com"]
+  default     = ["example@example.com"]
 }
 
 variable "notification_channel" {
@@ -41,7 +41,6 @@ variable "notification_channel" {
   type        = map(string)
   default = {
     "example1@example.com" = "User One"
-    "maravi@google.com"    = "User Two"
   }
 }
 
@@ -100,5 +99,173 @@ variable "alert_thresholds" {
     sql_postgres_connections_threshold = 2000
     sql_instance_state_threshold       = 1
     sql_replica_lag_threshold          = 5 #A negative value indicates that replication is inactive.
+  }
+}
+
+variable "alert_config" {
+  type = object({
+    uptime = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    server_up = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    cpu = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    memory = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    disk_utilization = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    disk_quota = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    memory_quota = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    postgres_connections = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    instance_state = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+    replica_lag = object({
+      filter             = string
+      threshold          = number
+      comparison         = string
+      duration           = string
+      alignment_period   = string
+      per_series_aligner = string
+    })
+  })
+  description = "Configurations for alert durations and thresholds"
+  default = {
+    uptime = {
+      filter             = string
+      threshold          = 60
+      comparison         = string
+      duration           = "120s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    server_up = {
+      filter             = string
+      threshold          = 1
+      comparison         = string
+      duration           = "60s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    cpu = {
+      filter             = string
+      threshold          = 0.9
+      comparison         = string
+      duration           = "300s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    memory = {
+      filter             = string
+      threshold          = 0.9
+      comparison         = string
+      duration           = "180s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    disk_utilization = {
+      filter             = string
+      threshold          = 0.8
+      comparison         = string
+      duration           = "180s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    disk_quota = {
+      filter             = string
+      threshold          = 10
+      comparison         = string
+      duration           = "120s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    memory_quota = {
+      filter             = string
+      threshold          = 10
+      comparison         = string
+      duration           = "120s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    postgres_connections = {
+      filter             = string
+      threshold          = 2000
+      comparison         = string
+      duration           = "120s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    instance_state = {
+      filter             = string
+      threshold          = 1
+      comparison         = string
+      duration           = "60s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
+    replica_lag = {
+      filter             = string
+      threshold          = 5 #A negative value indicates that replication is inactive.
+      comparison         = string
+      duration           = "120s"
+      alignment_period   = string
+      per_series_aligner = string
+    }
   }
 }

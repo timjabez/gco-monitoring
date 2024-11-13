@@ -313,3 +313,57 @@ notification_channels = values(google_monitoring_notification_channel.notificati
   }
 }
  */
+
+
+resource "google_monitoring_alert_policy" "cloud_sql_server_up_alert" {
+  display_name          = "${var.app_name} - Cloud SQL - ${var.environment} - Server Health Alert(SUM)"
+  project               = var.project_id
+  combiner              = "AND"
+  notification_channels = values(google_monitoring_notification_channel.notification_channel)[*].id
+
+  conditions {
+    display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Server Health Alert(SUM)"
+    condition_threshold {
+      filter          = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\" "
+      threshold_value = var.alert_thresholds.sql_server_up_threshold
+      comparison      = "COMPARISON_LT"
+      duration        = var.alert_durations.sql_server_up_alert_duration
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_SUM"
+      }
+    }
+  }
+  documentation {
+    content   = "Cloud SQL Server - ${var.environment} for ${var.app_name} is down. Consider viewing the service logs to retrieve more information."
+    mime_type = "text/markdown"
+  }
+}
+resource "google_monitoring_alert_policy" "cloud_sql_alert" {
+  for_each = var.alert_config
+
+  display_name          = "${var.app_name} - Cloud SQL - ${var.environment} - ${each.key} Alert"
+  project               = var.project_id
+  combiner              = "AND"
+  notification_channels = values(google_monitoring_notification_channel.notification_channel)[*].id
+
+  conditions {
+    display_name = "${var.app_name} - Cloud SQL - ${var.environment} - ${each.key} Alert"
+    condition_threshold {
+      # Customize filter for each alert type
+      filter          = each.value.filter
+      threshold_value = each.value.threshold
+      comparison      = each.value.comparison
+      duration        = each.value.duration
+      aggregations {
+        alignment_period   = each.value.alignment_period
+        per_series_aligner = each.value.per_series_aligner
+      }
+    }
+  }
+
+  documentation {
+    content   = "Alert for ${each.key} in ${var.environment} environment for ${var.app_name}. The metric has triggered an alert condition. Please review Cloud SQL logs or monitoring metrics for more details."
+    mime_type = "text/markdown"
+  }
+}
