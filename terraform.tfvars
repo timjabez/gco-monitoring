@@ -4,3 +4,4 @@ notification_channel = {
   "timjabez@google.com" = "Timothy"
 }
 notification_email = ["maravi@google.com", "timjabez@google.com"]
+database           = "my_library"

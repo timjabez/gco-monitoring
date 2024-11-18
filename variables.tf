@@ -4,8 +4,7 @@ variable "project_id" {
 }
 
 variable "database" {
-  type    = string
-  default = ""
+  type = string
 }
 
 variable "app_name" {
@@ -33,14 +32,14 @@ variable "create_dashboard" {
 variable "notification_email" {
   description = "List of email addresses for creating notification channels"
   type        = list(string)
-  default     = ["example@example.com"]
+  default     = []
 }
 
 variable "notification_channel" {
   description = "Map of email addresses to their corresponding display names"
   type        = map(string)
   default = {
-    "example1@example.com" = "User One"
+    # "example1@example.com" = "User One"
   }
 }
 
@@ -188,84 +187,84 @@ variable "alert_config" {
   description = "Configurations for alert durations and thresholds"
   default = {
     uptime = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/uptime\" resource.type=\"cloudsql_database\"  "
       threshold          = 60
-      comparison         = string
+      comparison         = "COMPARISON_LT"
       duration           = "120s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     server_up = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\" "
       threshold          = 1
-      comparison         = string
+      comparison         = "COMPARISON_LT"
       duration           = "60s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_SUM"
     }
     cpu = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/cpu/utilization\" resource.type=\"cloudsql_database\"  "
       threshold          = 0.9
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "300s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     memory = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/memory/utilization\" resource.type=\"cloudsql_database\" "
       threshold          = 0.9
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "180s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     disk_utilization = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/disk/utilization\" resource.type=\"cloudsql_database\" "
       threshold          = 0.8
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "180s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     disk_quota = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/disk/quota\" resource.type=\"cloudsql_database\" "
       threshold          = 10
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "120s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     memory_quota = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/memory/quota\" resource.type=\"cloudsql_database\"  "
       threshold          = 10
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "120s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     postgres_connections = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/postgresql/num_backends\" resource.type=\"cloudsql_database\"  "
       threshold          = 2000
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "120s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MAX"
     }
     instance_state = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/instance_state\" resource.type=\"cloudsql_database\"  "
       threshold          = 1
-      comparison         = string
+      comparison         = "COMPARISON_LT"
       duration           = "60s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_FRACTION_TRUE"
     }
     replica_lag = {
-      filter             = string
+      filter             = "metric.type=\"cloudsql.googleapis.com/database/replication/replica_lag\" resource.type=\"cloudsql_database\"  "
       threshold          = 5 #A negative value indicates that replication is inactive.
-      comparison         = string
+      comparison         = "COMPARISON_GT"
       duration           = "120s"
-      alignment_period   = string
-      per_series_aligner = string
+      alignment_period   = "60s"
+      per_series_aligner = "ALIGN_MEAN"
     }
   }
 }

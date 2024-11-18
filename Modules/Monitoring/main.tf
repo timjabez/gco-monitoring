@@ -1,6 +1,40 @@
 # This is where the main opinion / business logic / meat of the module resides.
 # Other .tf files maybe be used as long as they are not reserved for other uses.  See the README.md for the list
 
+
+/*
+# ********************************************************************************************
+# Module Name: cloud_sql_uptime_alert
+# Display Name: Cloud SQL Uptime Alert
+# Description: This alert checks uptime count that cloud sql instance has been up and running.
+# If the count is less than 1s in last 120s, it throws an alert to the notification channel
+# ********************************************************************************************
+ 
+resource "google_monitoring_alert_policy" "cloud_sql_uptime_alert" {
+count = (var.alert_thresholds.sql_uptime_threshold  > 0 && var.database != "") ? 1 : 0
+  display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Uptime Alert(MAX)"
+  project      = var.project_id
+    combiner     = "AND"
+notification_channels = values(google_monitoring_notification_channel.notification_channel)[*].id
+  conditions {
+    display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Uptime  Alert(MAX)"
+    condition_threshold {
+      filter          = "metric.type=\"cloudsql.googleapis.com/database/uptime\" metadata.system_labels.name = \"${var.database}\" resource.type=\"cloudsql_database\"  "
+      threshold_value = var.alert_thresholds.sql_uptime_threshold
+      comparison      = "COMPARISON_LT"
+      duration        = var.alert_durations.sql_uptime_alert_duration
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_MAX"
+      }
+    }
+  }
+  documentation {
+    content   = "Cloud SQL - ${var.environment} for ${var.app_name} is down. Consider viewing the service logs to retrieve more information."
+    mime_type = "text/markdown"
+  }
+}
+
 # ********************************************************************************************
 # Module Name: cloud_sql_server_up_alert
 # Display Name: Cloud SQL Server Up Alert
@@ -65,7 +99,7 @@ resource "google_monitoring_alert_policy" "cloud_sql_cpu_alert" {
     mime_type = "text/markdown"
   }
 }
-/*
+
  # ********************************************************************************************
 # Module Name: cloud_sql_memory_alert
 # Display Name: Cloud SQL Memory Alert
@@ -183,7 +217,7 @@ count = var.alert_thresholds.sql_memory_quota_threshold > 0  ? 1 : 0
   }
 }
  
-/*resource "google_monitoring_alert_policy" "max_connections" {
+resource "google_monitoring_alert_policy" "max_connections" {
 count = (var.alert_thresholds.sql_max_connections_threshold > 0 && var.database != "") ? 1 : 0
 enabled       = var.enable_Max_connections_metric
     display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Max Connection Alert"
@@ -281,64 +315,14 @@ count = var.alert_thresholds.sql_replica_lag_threshold > 0 ? 1 : 0
     mime_type = "text/markdown"
   }
 }
-# ********************************************************************************************
-# Module Name: cloud_sql_uptime_alert
-# Display Name: Cloud SQL Uptime Alert
-# Description: This alert checks uptime count that cloud sql instance has been up and running.
-# If the count is less than 1s in last 120s, it throws an alert to the notification channel
-# ********************************************************************************************
- 
-/*resource "google_monitoring_alert_policy" "cloud_sql_uptime_alert" {
-count = (var.alert_thresholds.sql_uptime_threshold  > 0 && var.database != "") ? 1 : 0
-  display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Uptime Alert(MAX)"
-  project      = var.project_id
-    combiner     = "AND"
-notification_channels = values(google_monitoring_notification_channel.notification_channel)[*].id
-  conditions {
-    display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Uptime  Alert(MAX)"
-    condition_threshold {
-      filter          = "metric.type=\"cloudsql.googleapis.com/database/uptime\" metadata.system_labels.name = \"${var.database}\" resource.type=\"cloudsql_database\"  "
-      threshold_value = var.alert_thresholds.sql_uptime_threshold
-      comparison      = "COMPARISON_LT"
-      duration        = var.alert_durations.sql_uptime_alert_duration
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_MAX"
-      }
-    }
-  }
-  documentation {
-    content   = "Cloud SQL - ${var.environment} for ${var.app_name} is down. Consider viewing the service logs to retrieve more information."
-    mime_type = "text/markdown"
-  }
-}
- */
+*/
 
 
-resource "google_monitoring_alert_policy" "cloud_sql_server_up_alert" {
-  display_name          = "${var.app_name} - Cloud SQL - ${var.environment} - Server Health Alert(SUM)"
-  project               = var.project_id
-  combiner              = "AND"
-  notification_channels = values(google_monitoring_notification_channel.notification_channel)[*].id
 
-  conditions {
-    display_name = "${var.app_name} - Cloud SQL - ${var.environment} - Server Health Alert(SUM)"
-    condition_threshold {
-      filter          = "metric.type=\"cloudsql.googleapis.com/database/up\" resource.type=\"cloudsql_database\" "
-      threshold_value = var.alert_thresholds.sql_server_up_threshold
-      comparison      = "COMPARISON_LT"
-      duration        = var.alert_durations.sql_server_up_alert_duration
-      aggregations {
-        alignment_period   = "60s"
-        per_series_aligner = "ALIGN_SUM"
-      }
-    }
-  }
-  documentation {
-    content   = "Cloud SQL Server - ${var.environment} for ${var.app_name} is down. Consider viewing the service logs to retrieve more information."
-    mime_type = "text/markdown"
-  }
-}
+
+
+
+
 resource "google_monitoring_alert_policy" "cloud_sql_alert" {
   for_each = var.alert_config
 
@@ -351,7 +335,7 @@ resource "google_monitoring_alert_policy" "cloud_sql_alert" {
     display_name = "${var.app_name} - Cloud SQL - ${var.environment} - ${each.key} Alert"
     condition_threshold {
       # Customize filter for each alert type
-      filter          = each.value.filter
+      filter          = each.value.filter + " metadata.system_labels.name = \"${var.database}\""
       threshold_value = each.value.threshold
       comparison      = each.value.comparison
       duration        = each.value.duration
